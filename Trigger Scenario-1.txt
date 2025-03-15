@@ -1,0 +1,29 @@
+When we Create Contact if Associated Account is not present then create new account and relate account with contact
+
+trigger relateAccCon on Contact (before insert) {
+    if(trigger.isBefore){
+        if(trigger.isInsert){
+            list<account> acclist = new list<account>();
+            for(contact con: trigger.new){
+                if(con.Accountid== null){
+                    Account acc = new Account();
+                    acc.Name= con.Name + 'Acc';
+                    acclist.add(acc);
+                    
+                }
+            }
+            if(acclist.size()>0){
+                insert acclist;
+            }
+            map<string,id> AccMap = new map<string,id>();
+            for(account acc:acclist){
+                accMap.put(acc.Name,acc.id);
+            }
+            for(contact con: trigger.new){
+                if(con.AccountId==null){
+                    con.AccountId=accMap.get(con.name+'Acc');	
+                }
+            }
+        }
+    }
+}
