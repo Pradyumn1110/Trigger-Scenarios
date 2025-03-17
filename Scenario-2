@@ -1,1 +1,23 @@
+Change VIP(custom Checklist Field) of Account to true if VIP of Account is also true
 
+trigger VIPConAcc on Contact (before insert) {
+    
+    if(trigger.isBefore){
+        if(trigger.isInsert){
+            set<id> IDSet = new set<id>();
+            for(contact con: trigger.new){
+                if(con.AccountId != null){
+                    IDSet.add(con.AccountId);
+                }
+                set<id> VIPAccIds = new set<id>();
+                for(account ac:[SELECT id,Name from Account WHERE id in:IDSet AND is_VIP__c=True]){
+                    VIPAccIds.add(ac.Id); 
+                }
+                for(contact c:trigger.new){
+                    c.is_VIP__c= VIPAccIds.contains(c.AccountId);
+                }
+            }
+        }
+    }
+    
+}
