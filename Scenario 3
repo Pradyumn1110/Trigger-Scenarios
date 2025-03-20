@@ -1,3 +1,5 @@
+Change VIP(custom Checklist Field) of Account to true if VIP of Account is also true.
+
 trigger VIPConAcc on Contact (before insert) {
     
     if(trigger.isBefore){
